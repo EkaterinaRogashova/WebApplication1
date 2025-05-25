@@ -1,0 +1,21 @@
+{
+  "products": [
+    {
+      "name": "привет",
+      "price": 100,
+      "id": "78da"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "petya",
+      "login": "pet",
+      "password": "pass"
+    }
+  ],
+  "category": {
+    "id": 1,
+    "name": "cats"
+  }
+}
