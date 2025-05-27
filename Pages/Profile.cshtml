@@ -1,0 +1,168 @@
+﻿@page "/Profile/{id}"
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Мой профиль</h1>
+    </div>
+
+    <div class="profile-content" style="display: flex;">
+        
+
+        <div class="profile-form" style="width: 50%">
+            <form id="profileForm">
+                <input type="hidden" id="userId" />
+                <div class="form-group">
+                    <label for="name">Имя пользователя:</label>
+                    <input type="text" id="name" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="pass">Пароль:</label>
+                    <input type="password" id="pass" class="form-control">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="saveBtn" class="btn-primary btn-lg w-100 rounded">Сохранить изменения</button>
+                </div>
+            </form>
+            <h2>
+                Мои товары
+            </h2>
+            <div class="table-responsive mb-4">
+                <table class="table table-striped" id="products-table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Название</th>
+                            <th>Цена</th>
+                            <th>Категория</th>
+                            <th>Владелец</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Данные будут загружены через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="avatar-section">
+            <img id="avatarImage" src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png" alt="Аватар" class="avatar">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoriesMap = {};
+            const usersMap = {};
+            // Получаем ID из URL
+            const pathArray = window.location.pathname.split('/');
+            const userId = pathArray[pathArray.length - 1];
+            document.getElementById('userId').value = userId;
+
+            // Загружаем данные пользователя
+            fetch(`http://localhost:3000/users/${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    document.getElementById('name').value = user.name;
+                    document.getElementById('email').value = user.login;
+                    document.getElementById('pass').value = user.password;
+                });
+
+            // Обработка формы
+            document.getElementById('profileForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const updatedUser = {
+                    name: document.getElementById('name').value,
+                    login: document.getElementById('email').value,
+                    password: document.getElementById('pass').value
+                };
+
+                fetch(`http://localhost:3000/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedUser)
+                })
+                    .then(response => {
+                    });
+            });
+
+            loadReferences();
+
+            function loadProducts() {
+                let url = `http://localhost:3000/products?userOwnerId=${userId}`;
+
+                fetch(url)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        renderProducts(data);
+                    });
+            }
+            //отображение таблицы
+            function renderProducts(products) {
+                const tableBody = document.querySelector('#products-table tbody');
+                tableBody.innerHTML = products.map(product => `
+                            <tr>
+                                <td>${product.id}</td>
+                                <td>${product.name}</td>
+                                <td>${product.price.toFixed(2)}</td>
+                                <td>${categoriesMap[product.categoryId] || product.categoryId}</td>
+                                <td>${usersMap[product.userOwnerId] || product.userOwnerId}</td>
+                                <td>
+                                    <button class="btn-danger" onclick="Delete('${product.id}')">Удалить</button>
+                                </td>
+                                <td>
+                                    <button class="btn-info" onclick="location.href='/edit/${product.id}'">Редактировать</button>
+                                </td>
+                            </tr>
+                        `).join('');
+            }
+
+            async function loadReferences() {
+                try {
+                    // Загружаем категории
+                    const categoriesResponse = await fetch('http://localhost:3000/category');
+                    if (!categoriesResponse.ok) throw new Error('Ошибка загрузки категорий');
+                    const categories = await categoriesResponse.json();
+
+                    // Заполняем словарь категорий
+                    categories.forEach(c => {
+                        categoriesMap[c.id] = c.name;
+                    });
+
+                    // Загружаем пользователей
+                    const usersResponse = await fetch('http://localhost:3000/users');
+                    if (!usersResponse.ok) throw new Error('Ошибка загрузки пользователей');
+                    const users = await usersResponse.json();
+
+                    // Заполняем словарь пользователей
+                    users.forEach(u => {
+                        usersMap[u.id] = u.name;
+                    });
+
+                    // После загрузки всех справочников загружаем продукты
+                    await loadProducts();
+
+                } catch (error) {
+                    console.error('Ошибка загрузки справочников:', error);
+                    alert('Не удалось загрузить справочные данные');
+                }
+            }
+        });
+    </script>
+}

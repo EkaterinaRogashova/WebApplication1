@@ -3,9 +3,17 @@
 
 <div>
     <form id="enterForm">
-        <input id ="login" placeholder="Введите логин" />
-        <input id="pass" placeholder="Введите пароль" type="password"/>
-        <button type="submit">Войти</button>
+        <div class="mb-4">
+            <label for="login" class="form-label" style="font-size: 24px;">Введите e-mail</label>
+            <input type="email" class="form-control form-control-lg rounded" id="login" placeholder="example@example.com" required>
+        </div>
+        <div class="mb-4">
+            <label for="pass" class="form-label" style="font-size: 24px;">Введите пароль</label>
+            <input type="password" class="form-control form-control-lg rounded" id="pass" placeholder="********" required>
+        </div>
+        <div class="mb-4">
+            <button type="submit" class="btn-primary btn-lg w-100 rounded">Войти</button>
+        </div>
     </form>
 </div>
 
@@ -19,7 +27,7 @@
                     const password = document.getElementById('pass').value;
                     const response = await fetch(`http://localhost:3000/users?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`);
                     const data = await response.json();
-                    alert(`Пользователь ${data[0].name} найден`)
+                    location.href = `/Profile/${data[0].id}`;
                 }
                 catch {
                     alert('Такого пользователя не существует')

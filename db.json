@@ -1,21 +1,66 @@
 {
   "products": [
     {
+      "name": "приrвет",
+      "price": 1000,
+      "categoryId": "1",
+      "userOwnerId": "2",
+      "id": "78da"
+    },
+    {
+      "name": "efefe",
+      "price": 100,
+      "id": "feweew",
+      "categoryId": 1,
+      "userOwnerId": 1
+    },
+    {
+      "name": "fewfewf",
+      "price": 100,
+      "id": "fewf",
+      "categoryId": 1,
+      "userOwnerId": 1
+    },
+    {
       "name": "привет",
       "price": 100,
-      "id": "78da"
+      "id": "ewfewfew",
+      "categoryId": 1,
+      "userOwnerId": 1
+    },
+    {
+      "name": "Екате",
+      "price": 12,
+      "categoryId": "1",
+      "userOwnerId": "2",
+      "id": "9c8d"
+    },
+    {
+      "id": "c22a",
+      "name": "bregre",
+      "price": 4324,
+      "categoryId": "1",
+      "userOwnerId": "2"
     }
   ],
   "users": [
     {
-      "id": "1",
-      "name": "petya",
-      "login": "pet",
-      "password": "pass"
+      "name": "petya1",
+      "login": "petya@mail.ru",
+      "password": "pass",
+      "id": "1"
+    },
+    {
+      "name": "petya2",
+      "login": "petya2@mail.ru",
+      "password": "pass",
+      "id": "2"
     }
   ],
-  "category": {
-    "id": 1,
-    "name": "cats"
-  }
+  "category": [
+    {
+      "id": 1,
+      "name": "cats"
+    }
+  ]
 }
